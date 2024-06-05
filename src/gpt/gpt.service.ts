@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { OrthographyDto } from './dtos/orthography.dto';
 import OpenAI from 'openai';
-import { ProsConsDiscusserDto, TranslateDto } from './dtos';
+import { AudioToTextDto, ProsConsDiscusserDto, TranslateDto } from './dtos';
 import {
   orthographyCheckUseCase,
   prosConsDicusserUseCase,
   prosConsDicusserStreamUseCase,
   translateUseCase,
+  textToAudioUseCase,
+  getAudiofilePathUseCase,
+  audioToTextUseCase,
 } from './use-cases';
+import { TextToAudioDto } from './dtos/text-to-audio.dto';
 
 @Injectable()
 export class GptService {
@@ -34,5 +38,23 @@ export class GptService {
       prompt: translateDto.prompt,
       lang: translateDto.lang,
     });
+  }
+  async textToAudio(textToAudioDto: TextToAudioDto) {
+    return await textToAudioUseCase(this.openia, {
+      prompt: textToAudioDto.prompt,
+      voice: textToAudioDto.voice,
+    });
+  }
+
+  getAudioFilePath(fileId: string) {
+    return getAudiofilePathUseCase(fileId);
+  }
+
+  async audioToText(
+    audioFile: Express.Multer.File,
+    audioToTextDto: AudioToTextDto,
+  ) {
+    const { prompt } = audioToTextDto;
+    return await audioToTextUseCase(this.openia, { prompt, audioFile });
   }
 }
