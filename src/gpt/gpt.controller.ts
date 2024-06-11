@@ -15,6 +15,8 @@ import {
 import { GptService } from './gpt.service';
 import {
   AudioToTextDto,
+  ImageGenerationDto,
+  ImageVariationDto,
   OrthographyDto,
   ProsConsDiscusserDto,
   TranslateDto,
@@ -49,8 +51,6 @@ export class GptController {
 
     for await (const message of stream) {
       const piece = message.choices[0].delta.content || '';
-      //res.write(JSON.stringify(message));
-      //console.log(piece);
       res.write(piece);
     }
 
@@ -115,5 +115,22 @@ export class GptController {
     file: Express.Multer.File,
   ) {
     return this.gptService.audioToText(file, audioToTextDto);
+  }
+
+  @Post('image-generation')
+  imageGeneration(@Body() imageGenerationDto: ImageGenerationDto) {
+    return this.gptService.imageGenerator(imageGenerationDto);
+  }
+  @Get('image-generation/:file')
+  async getGneraterImage(@Param('file') fileId: string, @Res() res: Response) {
+    const filePath = await this.gptService.getImageFilePath(fileId);
+
+    res.setHeader('Content-Type', 'image/png');
+    res.status(HttpStatus.OK);
+    res.sendFile(filePath);
+  }
+  @Post('image-variation')
+  imageVarietion(@Body() imageVariationDto: ImageVariationDto) {
+    return this.gptService.generateImageVariation(imageVariationDto);
   }
 }

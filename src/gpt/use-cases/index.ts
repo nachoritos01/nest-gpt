@@ -5,3 +5,6 @@ export * from './translate.use-case';
 export * from './text-to-audio.use-case';
 export * from './get-audio-file-path.use-case';
 export * from './audio-to-text.use-case';
+export * from './image-generation.use-case';
+export * from './get-image-file-path.use-case';
+export * from './image-variation.use-case';
